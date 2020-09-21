@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable name="vm" type="com.farhanck.currencyconverter.ui.ConverterViewModel"/>
+    </data>
+
+<androidx.core.widget.NestedScrollView
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.ConverterFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:orientation="vertical"
+        >
+
+        <EditText
+            android:layout_width="match_parent"
+            android:hint="Amount"
+            android:inputType="numberDecimal"
+            android:text="1"
+            android:onTextChanged="@{(text, start, before, count) -> vm.onAmountChange(text)}"
+            android:layout_height="match_parent"/>
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingStart="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/spinner_bg"
+            android:onItemSelected="@{(parent,view,pos,id) -> vm.onCurrencyChange(vm.currencies.get(pos) )}"
+            app:currencies="@{vm.currencies}"
+            app:source="@{vm.source}"
+
+            />
+
+<!--        <androidx.appcompat.widget.AppCompatButton-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:background="@color/colorPrimary"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:onClick="@{() -> vm.convert()}"-->
+<!--            android:text="Convert"-->
+<!--            />-->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="italic"
+            android:textSize="10dp"
+            android:text="@{vm.rate.lastUpdated()}"
+            />
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="3"
+        app:viewModel="@{vm}"
+        app:rate="@{vm.rate}"
+        />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
+</layout>
