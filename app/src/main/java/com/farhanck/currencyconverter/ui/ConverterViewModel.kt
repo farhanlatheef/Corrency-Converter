@@ -1,9 +1,11 @@
 package com.farhanck.currencyconverter.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.farhanck.currencyconverter.core.*
+import com.farhanck.currencyconverter.data.preference.Preferences
 import com.farhanck.currencyconverter.data.db.Currency
 import com.farhanck.currencyconverter.data.db.CurrencyDao
 import com.farhanck.currencyconverter.data.db.ExchangeRate
@@ -18,9 +20,12 @@ class ConverterViewModel(
     val currencyDao : CurrencyDao,
     val rateDao: ExchangeRateDao,
     val api : EndPoints,
-    val pref : Preferences
+    val pref : Preferences,
+    val schedulers: RxSingleSchedulers
 ) : BaseViewModel() {
     val amount = MutableLiveData<Double>(1.0);
+    val source = pref.getSourceCurrency();
+
 
 
     val currencies : LiveData<List<Currency>> = Transformations.map(currencyDao.getAll()) { data ->
@@ -28,13 +33,14 @@ class ConverterViewModel(
         data
     }
 
-    val source = pref.getSourceCurrency();
 
     val rate : LiveData<ExchangeRate> = Transformations.switchMap(DoubleTrigger(amount, source)) { result ->
         Transformations.map(rateDao.get("USD")) { data ->
            ExchangeRate.convert(result.first!!, result.second!!, data)
         }
     }
+
+
 
     private val _errorToShow = MutableLiveData<UIEvent<String>>()
     val errorToShow : LiveData<UIEvent<String>>
@@ -43,8 +49,7 @@ class ConverterViewModel(
 
     private fun fetchCurrencies() {
         addToDisposable(api.currencyList()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
+            .compose(schedulers.applySchedulers())
             .subscribe({
                 val error = EndPoints.isSuccessResponse(it);
                 if(error != null)  _errorToShow.value = UIEvent(error);

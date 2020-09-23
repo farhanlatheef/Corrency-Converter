@@ -1,17 +1,14 @@
 package com.farhanck.currencyconverter
 
 import android.app.Application
-import android.app.Service
 import android.content.Context
 import android.content.SharedPreferences
-import com.farhanck.currencyconverter.core.Preferences
-import com.farhanck.currencyconverter.core.SharedPreferenceLiveData
-import com.farhanck.currencyconverter.core.SharedPreferenceStringLiveData
+import com.farhanck.currencyconverter.core.RxSingleSchedulers
+import com.farhanck.currencyconverter.data.preference.AppPreferences
 import com.farhanck.currencyconverter.data.db.AppDatabase
-import com.farhanck.currencyconverter.data.db.CurrencyDao
+import com.farhanck.currencyconverter.data.preference.Preferences
 import com.farhanck.currencyconverter.data.server.EndPoints
 import com.farhanck.currencyconverter.ui.ConverterViewModel
-import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.Interceptor
 import org.koin.android.ext.koin.androidApplication
@@ -19,7 +16,6 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 
@@ -57,9 +53,7 @@ val roomModule = module {
     single(createdAtStart = false) { get<AppDatabase>().getExchangeRateDao() }
 }
 
-val viewModelModule = module {
-    viewModel { ConverterViewModel(get() , get(), get(), get()) } //
-}
+
 
 
 
@@ -72,5 +66,9 @@ private fun provideSettingsPreferences(app: Application): SharedPreferences =
 
 val preferencesModule = module {
     single { provideSettingsPreferences(androidApplication()) }
-    single { Preferences(get()) }
+    single {  AppPreferences(get()) as Preferences }
+}
+
+val viewModelModule = module {
+    viewModel { ConverterViewModel(get() , get(), get(), get(), RxSingleSchedulers.DEFAULT) } //
 }

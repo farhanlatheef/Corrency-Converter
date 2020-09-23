@@ -33,7 +33,7 @@ data class Currency(
             return list;
         }
 
-        fun getSpinnerPosition(code :String, list : List<Currency>) : Int {
+        fun getListIndex(code :String, list : List<Currency>) : Int {
             list.forEachIndexed { index, item ->
                 if(item.code.equals(code)) return index;
             }

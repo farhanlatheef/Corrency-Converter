@@ -16,7 +16,7 @@ import com.farhanck.currencyconverter.data.db.AppDatabase.Companion.DB_VERSION
 )
 
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun getCurrencyDao(): CurrencyDao
+    abstract  fun getCurrencyDao(): CurrencyDao
     abstract fun getExchangeRateDao(): ExchangeRateDao
 
     companion object {

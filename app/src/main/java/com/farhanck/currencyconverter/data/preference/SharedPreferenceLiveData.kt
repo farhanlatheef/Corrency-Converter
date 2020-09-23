@@ -1,4 +1,4 @@
-package com.farhanck.currencyconverter.core
+package com.farhanck.currencyconverter.data.preference
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData

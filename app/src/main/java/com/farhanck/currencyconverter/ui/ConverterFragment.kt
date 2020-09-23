@@ -1,7 +1,5 @@
 package com.farhanck.currencyconverter.ui
 
-import android.app.AlertDialog
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -77,6 +75,6 @@ fun setCurrencies(spinner:AppCompatSpinner, currencies : List<Currency>?,  sourc
     val currencies = currencies ?: return;
     if(currencies.size == 0) return;
     spinner.adapter = ArrayAdapter(spinner.context, R.layout.spinner_item, currencies);
-    spinner.setSelection(Currency.getSpinnerPosition(source, currencies))
+    spinner.setSelection(Currency.getListIndex(source, currencies))
 }
 
